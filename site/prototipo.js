@@ -153,16 +153,28 @@ function showComplete() {
 function showAdmin() {
   const answers = CASES.filter(item => state.answers[item.id]);
   const total = answers.reduce((sum, item) => sum + item.options.find(option => option.id === state.answers[item.id].option).points, 0);
-  app.innerHTML = `<div class="intro"><div><span class="eyebrow">Vista del equipo · /admin</span><h1>Registro de respuestas</h1><p>Diagnóstico inicial · Conocimiento del negocio · Ana (participante ficticia).</p></div><a href="../prototipo-caso-mibanco.html">Volver al diagnóstico ↗</a></div>
-    <div class="admin-note">Solo demostración. Esta página no tiene autenticación y muestra únicamente los datos guardados en este navegador y origen. No es un panel administrativo de producción.</div>
-    <div class="stats"><div class="stat"><strong>${answers.length} / 2</strong><span>Casos respondidos</span></div><div class="stat"><strong>${total} / 4</strong><span>Puntos registrados en estos dos casos</span></div><div class="stat"><strong>Sin umbral</strong><span>Nivel esperado pendiente de definir</span></div></div>
-    <div class="table-wrap"><table><caption>Detalle de los dos casos de la demo</caption><thead><tr><th scope="col">Caso</th><th scope="col">Respuesta elegida</th><th scope="col">Clasificación</th><th scope="col">Puntaje</th><th scope="col">Registro</th></tr></thead><tbody>
-    ${CASES.map(item => {
+  app.innerHTML = `<div class="intro"><div><span class="eyebrow">Vista del equipo · /admin</span><h1>Registro de respuestas</h1><p>Diagnóstico inicial · Ana (participante ficticia).</p></div><a href="../prototipo-caso-mibanco.html">Volver al diagnóstico ↗</a></div>
+    <p class="admin-note">Demo sin autenticación. Solo muestra las respuestas guardadas en este navegador.</p>
+    <div class="stats"><div class="stat"><strong>${answers.length} / 2</strong><span>Casos respondidos</span></div><div class="stat"><strong>${total} / 4</strong><span>Puntos registrados</span></div></div>
+    <p class="small">El umbral de aprobación está pendiente de definir. Este diagnóstico no bloquea el aprendizaje.</p>
+    <div class="records-heading"><h2>Respuestas por caso</h2><p class="small">Conocimiento del negocio</p></div>
+    <div class="records">
+    ${CASES.map((item, index) => {
       const answer = state.answers[item.id];
       const option = answer && item.options.find(entry => entry.id === answer.option);
       const categoryClass = option?.points === 2 ? 'good' : option?.points === 1 ? 'developing' : option?.category === 'Error Crítico' ? 'critical' : '';
-      return `<tr><td><strong>${item.title}</strong><p class="small">${item.id} · CN1</p></td><td>${option ? `${item.id}-${option.id}<p>${option.text}</p>` : 'Sin respuesta'}</td><td>${option ? `<span class="tag ${categoryClass}">${option.category}</span>` : '—'}</td><td>${option ? `${option.points} / 2` : '—'}</td><td>${answer ? new Date(answer.at).toLocaleString('es-PE') : 'Pendiente'}<p class="small">Orden: ${state.order[item.id].join(' · ')}</p></td></tr>`;
-    }).join('')}</tbody></table></div><p class="small" style="margin-top:16px">Las opciones se mezclan por caso; cada una conserva su identificador. Una respuesta errónea y un error crítico valen 0, pero se registran como categorías distintas.</p>`;
+      return `<article class="response-card" aria-labelledby="record-${index}">
+        <div class="record-meta"><span class="eyebrow">Caso 0${index + 1}</span><span class="tag ${answer ? 'good' : ''}">${answer ? 'Registrada' : 'Pendiente'}</span></div>
+        <h3 id="record-${index}">${item.title}</h3>
+        ${option ? `<div class="chosen-answer"><span class="answer-label">Respuesta elegida</span><p>${option.text}</p></div>
+        <div class="result-row"><span class="tag ${categoryClass}">${option.category}</span><strong>${option.points}<small> / 2 puntos</small></strong></div>` : '<p class="pending-answer">Este caso todavía no tiene una respuesta.</p>'}
+        <details class="record-trace"><summary>Ver trazabilidad</summary><dl>
+          <dt>Caso</dt><dd>${item.id} · CN1</dd>
+          ${option ? `<dt>Opción</dt><dd>${item.id}-${option.id}</dd><dt>Registrada</dt><dd>${new Date(answer.at).toLocaleString('es-PE')}</dd>` : ''}
+          <dt>Orden mostrado</dt><dd>${state.order[item.id].join(' · ')}</dd>
+        </dl></details>
+      </article>`;
+    }).join('')}</div><p class="small records-note">Una respuesta errónea y un error crítico valen 0 puntos, pero se registran como categorías distintas.</p>`;
 }
 function render() {
   if (document.body.dataset.page === 'admin') return showAdmin();
