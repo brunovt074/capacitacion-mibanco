@@ -1,4 +1,5 @@
 const STORAGE_KEY = 'mibanco-diagnostico-mock-v2';
+history.scrollRestoration = 'manual';
 const CASES = [
   {
     id: 'MB-CN-C01', title: 'El taller de confección y la campaña escolar', short: 'Taller de confección',
