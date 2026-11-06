@@ -1,0 +1,42 @@
+name: mibanco-whatsapp-demo
+
+services:
+  demo:
+    build: ./backend
+    restart: unless-stopped
+    read_only: true
+    mem_limit: 192m
+    env_file: .env.demo
+    environment:
+      DATABASE_URL: sqlite:////data/training.db
+      VIDEO_BASE_URL: https://capacitacion-mibanco.72-60-247-32.sslip.io
+      PYTHONDONTWRITEBYTECODE: "1"
+    volumes:
+      - demo_data:/data
+    tmpfs:
+      - /tmp
+    networks:
+      easypanel:
+        aliases:
+          - mibanco-training-demo
+    healthcheck:
+      test: ["CMD", ".venv/bin/python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health', timeout=3)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    labels:
+      traefik.enable: "true"
+      traefik.docker.network: easypanel
+      traefik.http.routers.mibanco-demo.rule: Host(`capacitacion-mibanco.72-60-247-32.sslip.io`) && Path(`/health`)
+      traefik.http.routers.mibanco-demo.priority: "100"
+      traefik.http.routers.mibanco-demo.entrypoints: https
+      traefik.http.routers.mibanco-demo.tls: "true"
+      traefik.http.routers.mibanco-demo.tls.certresolver: letsencrypt
+      traefik.http.services.mibanco-demo.loadbalancer.server.port: "8000"
+
+networks:
+  easypanel:
+    external: true
+
+volumes:
+  demo_data:

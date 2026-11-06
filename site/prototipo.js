@@ -150,11 +150,34 @@ function showComplete() {
     <div class="actions"><button class="button secondary" id="review">Revisar mis respuestas</button></div></section>`;
   document.querySelector('#review').onclick = () => { state.index = 0; saveState(); render(); };
 }
+let adminStatus = '';
+function resetDemo() {
+  if (!window.confirm('¿Reiniciar el diagnóstico de este navegador? Se borrarán las respuestas y videos vistos guardados localmente. No afecta la demo de WhatsApp.')) {
+    adminStatus = 'Reinicio cancelado. No se borró nada.';
+    return render();
+  }
+  storageAvailable = true;
+  try { localStorage.removeItem(STORAGE_KEY); }
+  catch { storageAvailable = false; }
+  state = { index: 0, watched: {}, answers: {}, order: {} };
+  for (const item of CASES) state.order[item.id] = shuffled(item.options.map(option => option.id));
+  saveState();
+  adminStatus = storageAvailable
+    ? 'Listo: se borraron las respuestas y el avance guardados en este navegador. Ya puedes completar el diagnóstico otra vez.'
+    : 'No se pudo acceder al almacenamiento del navegador, por lo que no se puede confirmar el borrado. Revisa los permisos de este sitio e inténtalo otra vez.';
+  render();
+}
 function showAdmin() {
   const answers = CASES.filter(item => state.answers[item.id]);
   const total = answers.reduce((sum, item) => sum + item.options.find(option => option.id === state.answers[item.id].option).points, 0);
   app.innerHTML = `<div class="intro"><div><span class="eyebrow">Vista del equipo · /admin</span><h1>Registro de respuestas</h1><p>Diagnóstico inicial · Ana (participante ficticia).</p></div><a href="../prototipo-caso-mibanco.html">Volver al diagnóstico ↗</a></div>
     <p class="admin-note">Demo sin autenticación. Solo muestra las respuestas guardadas en este navegador.</p>
+    <section class="reset-panel" aria-labelledby="reset-title"><h2 id="reset-title">Reiniciar demo del navegador</h2>
+      <p class="small">Borra solo las respuestas, los videos vistos y el avance guardados en este navegador, y vuelve a preparar el diagnóstico original. No usa servidor ni toca datos reales.</p>
+      <p class="small"><strong>La demo de WhatsApp es independiente.</strong> Para reiniciarla, escribe REINICIAR en su chat.</p>
+      <button class="button secondary" id="reset-demo" type="button">Reiniciar demo de este navegador</button>
+      <p class="small" id="reset-status" role="status" aria-live="polite" tabindex="-1">${adminStatus}</p>
+      ${storageAvailable ? '' : '<p class="small" role="alert">El almacenamiento del navegador no está disponible; no se pueden guardar ni borrar respuestas.</p>'}</section>
     <div class="stats"><div class="stat"><strong>${answers.length} / 2</strong><span>Casos respondidos</span></div><div class="stat"><strong>${total} / 4</strong><span>Puntos registrados</span></div></div>
     <p class="small">El umbral de aprobación está pendiente de definir. Este diagnóstico no bloquea el aprendizaje.</p>
     <div class="records-heading"><h2>Respuestas por caso</h2><p class="small">Conocimiento del negocio</p></div>
@@ -175,6 +198,8 @@ function showAdmin() {
         </dl></details>
       </article>`;
     }).join('')}</div><p class="small records-note">Una respuesta errónea y un error crítico valen 0 puntos, pero se registran como categorías distintas.</p>`;
+  document.querySelector('#reset-demo').onclick = resetDemo;
+  if (adminStatus) document.querySelector('#reset-status').focus();
 }
 function render() {
   if (document.body.dataset.page === 'admin') return showAdmin();

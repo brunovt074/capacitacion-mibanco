@@ -95,6 +95,10 @@ dialog p { margin-top: 14px; color: var(--muted); }
 .complete p { margin-top: 18px; color: var(--muted); }
 .next-step { border-left: 3px solid var(--yellow); padding: 12px 20px; margin-top: 30px; }
 .next-step p { margin-top: 4px; font-size: 14px; }
+.reset-panel { margin-top: 16px; padding: 16px; border: 1px solid var(--line); border-radius: 5px; background: white; }
+.reset-panel h2 { margin: 0 0 8px; font-size: 16px; }
+.reset-panel .button { margin: 8px 0; }
+.header-link { margin-left: 16px; font-size: 13px; font-weight: 650; color: var(--green-dark); text-decoration: none; }
 .admin-note { margin-top: 16px; font-size: 12px; color: var(--muted); }
 .stats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-block: 24px 12px; }
 .stat { border: 1px solid var(--line); padding: 16px; border-radius: 6px; }
