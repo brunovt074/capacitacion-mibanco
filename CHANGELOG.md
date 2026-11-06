@@ -9,7 +9,8 @@
 - GitHub Actions despliega los archivos de `site/` al actualizar `main`; también permite ejecución manual. La clave SSH solo permite escribir en el directorio de este sitio.
 
 ### Fixed
-- El video se centra al abrir el caso y comenzar la reproducción, con altura limitada al viewport y navegación superior fija.
+- El video se centra al abrir el caso y comenzar la reproducción, con altura limitada al viewport.
+- La navegación superior se desplaza con la página; títulos y espaciados más contenidos mantienen el foco en el video.
 
 ## Operación del mockup
 
