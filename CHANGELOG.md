@@ -11,6 +11,7 @@
 ### Fixed
 - El video se centra al abrir el caso y comenzar la reproducción, con altura limitada al viewport.
 - La navegación superior se desplaza con la página; títulos y espaciados más contenidos mantienen el foco en el video.
+- El registro del equipo usa tarjetas responsivas en lugar de tablas, con respuesta y puntaje visibles y trazabilidad desplegable.
 
 ## Operación del mockup
 
