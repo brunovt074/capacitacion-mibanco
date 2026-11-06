@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Diagnóstico inicial · Mibanco</title>
+  <link rel="stylesheet" href="prototipo.css">
+  <script src="prototipo.js" defer></script>
+</head>
+<body>
+  <header class="header">
+    <div class="header-inner">
+      <img class="logo" src="assets/mibanco.png" alt="Mibanco" width="124" height="59">
+      <span class="header-title">Aprendemos para acompañar</span>
+      <span class="demo-label">Prototipo</span>
+    </div>
+  </header>
+  <main class="container" id="app" tabindex="-1">
+    <noscript>Activa JavaScript para reproducir la interacción de este mockup.</noscript>
+  </main>
+  <footer class="footer container">
+    <p>Mockup de la etapa 2 · Ana es una participante ficticia. Se muestran 2 casos de un comportamiento; la ruta completa de Mibanco contempla 6 casos.</p>
+    <p>Videos de referencia y textos de ejemplo, no contenido final. Las respuestas se guardan solo en este navegador, sin servidor ni conexión a WhatsApp.</p>
+    <a href="admin/">Ver cómo lo registra el equipo <span aria-hidden="true">↗</span></a>
+  </footer>
+  <dialog id="confirm-dialog" aria-labelledby="confirm-title">
+    <form method="dialog">
+      <span class="eyebrow">Confirma tu elección</span>
+      <h2 id="confirm-title">¿Enviar tu respuesta?</h2>
+      <p>Una vez enviada, no podrás modificarla en este diagnóstico.</p>
+      <div class="dialog-actions">
+        <button class="button secondary" value="cancel">Volver a revisar</button>
+        <button class="button" value="send">Sí, enviar</button>
+      </div>
+    </form>
+  </dialog>
+</body>
+</html>

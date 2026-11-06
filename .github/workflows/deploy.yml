@@ -1,0 +1,45 @@
+name: Deploy VPS
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: capacitacion-mibanco-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+      - name: Check JavaScript
+        run: node --check site/prototipo.js
+      - name: Configure SSH
+        env:
+          VPS_SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+          VPS_KNOWN_HOSTS: ${{ secrets.VPS_KNOWN_HOSTS }}
+        run: |
+          install -d -m 700 ~/.ssh
+          printf '%s\n' "$VPS_SSH_KEY" > ~/.ssh/deploy_key
+          printf '%s\n' "$VPS_KNOWN_HOSTS" > ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/deploy_key ~/.ssh/known_hosts
+      - name: Publish static site
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+          VPS_USER: ${{ secrets.VPS_USER }}
+        run: rsync -rz --delete --chmod=D755,F644 -e 'ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o BatchMode=yes -o StrictHostKeyChecking=yes' site/ "$VPS_USER@$VPS_HOST:./"
+      - name: Verify HTTPS site and admin
+        run: |
+          curl --fail --silent --show-error https://capacitacion-mibanco.72-60-247-32.sslip.io/ --output /dev/null
+          curl --fail --silent --show-error https://capacitacion-mibanco.72-60-247-32.sslip.io/admin/ --output /dev/null
+      - name: Remove deployment key
+        if: always()
+        run: rm -f ~/.ssh/deploy_key
